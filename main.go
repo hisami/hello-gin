@@ -4,21 +4,31 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
-func main() {
-	router := gin.Default()
-	ua := ""
+type Todo struct {
+	gorm.Model
+	Text   string
+	Status string
+}
 
-	// ミドルウェアを使用
-	router.Use(func(c *gin.Context) {
-		ua = c.GetHeader("User-Agent")
-		c.Next()
-	})
+func main() {
+	// DB接続
+	db, err := gorm.Open("sqlite3", "test.sqlite3")
+	if err != nil {
+		panic("Cannot open database")
+	}
+	db.AutoMigrate(&Todo{})
+	defer db.Close()
+
+	// ルーティング
+	router := gin.Default()
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message":    "Hello world!!",
-			"User-Agent": ua,
+			"message": "Hello world!!",
 		})
 	})
 
