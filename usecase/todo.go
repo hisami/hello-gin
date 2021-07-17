@@ -7,6 +7,7 @@ import (
 
 type TodoUsecase interface {
 	Create(title, status string) (*model.Todo, error)
+	FindAll() ([]*model.Todo, error)
 }
 
 type todoUsecase struct {
@@ -31,4 +32,14 @@ func (tu *todoUsecase) Create(title, status string) (*model.Todo, error) {
 	}
 
 	return createdTodo, nil
+}
+
+// FindAll
+func (tu *todoUsecase) FindAll() ([]*model.Todo, error) {
+	todos, err := tu.todoRepo.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return todos, nil
 }

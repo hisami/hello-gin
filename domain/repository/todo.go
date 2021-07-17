@@ -6,4 +6,5 @@ import (
 
 type TodoRepository interface {
 	Create(todo *model.Todo) (*model.Todo, error)
+	FindAll() ([]*model.Todo, error)
 }

@@ -24,3 +24,14 @@ func (tr *TodoRepository) Create(todo *model.Todo) (*model.Todo, error) {
 
 	return todo, nil
 }
+
+// FindAll
+func (tr *TodoRepository) FindAll() ([]*model.Todo, error) {
+	var todos []*model.Todo
+
+	if err := tr.Conn.Find(&todos).Error; err != nil {
+		return nil, err
+	}
+
+	return todos, nil
+}
