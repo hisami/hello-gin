@@ -13,6 +13,11 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type TodoRequest struct {
+	Title  string `json:"title"`
+	Status string `json:"status"`
+}
+
 func main() {
 	// DB接続
 	db, err := gorm.Open("sqlite3", "test.sqlite3")
@@ -30,20 +35,14 @@ func main() {
 	router := gin.Default()
 	router.GET("/", func(c *gin.Context) {
 		todos, _ := todoUsecase.FindAll()
-		c.JSON(http.StatusOK, todos) // 構造体の配列
+		c.JSON(http.StatusOK, todos)
 	})
-
 	router.POST("/", func(c *gin.Context) {
-		type TodoRequest struct {
-			Title  string `json:"title"`
-			Status string `json:"status"`
-		}
+		// リクエストボディの受け取り
 		var todoRequest TodoRequest
 		c.BindJSON(&todoRequest)
-		todoUsecase.Create(todoRequest.Title, todoRequest.Status)
-		c.JSON(http.StatusOK, gin.H{
-			"status": "success!!",
-		})
+		todo, _ := todoUsecase.Create(todoRequest.Title, todoRequest.Status)
+		c.JSON(http.StatusOK, todo)
 	})
 
 	router.Run()
